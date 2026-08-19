@@ -334,6 +334,43 @@ export class Emulator {
     await this.setupFileSystem()
   }
 
+  async switchDisc(index: number) {
+    let delta = this.options.multiDiscIndex ? index - this.options.multiDiscIndex : 0
+    if (delta === 0) {
+      return
+    }
+
+    const requestedRom = this.options.multiDiscRom?.[index]
+    if (!requestedRom) {
+      return
+    }
+
+    const requestedResolvableFile = await this.options.createResolvableFile(requestedRom)
+    if (!requestedResolvableFile) {
+      return
+    }
+
+    await this.fs.writeFile(
+      path.join(EmulatorFileSystem.contentDirectory, requestedResolvableFile.name),
+      requestedResolvableFile,
+    )
+
+    this.sendCommand('DISK_EJECT_TOGGLE')
+
+    while (delta !== 0) {
+      if (delta > 0) {
+        this.sendCommand('DISK_NEXT')
+        delta--
+      } else {
+        this.sendCommand('DISK_PREV')
+        delta++
+      }
+    }
+
+    this.sendCommand('DISK_EJECT_TOGGLE')
+    this.options.multiDiscIndex = index
+  }
+
   private clearStateFile() {
     try {
       this.fs.unlink(this.stateFilePath)
@@ -487,6 +524,11 @@ export class Emulator {
     installSetImmediatePolyfill()
 
     this.recordGlobalDOMEventListeners()
+
+    if (this.options.multiDisc) {
+      this.options.multiDiscIndex = 1
+    }
+
     Module.callMain(raArgs)
     for (const [eventTarget] of this.globalDOMEventListeners) {
       // @ts-expect-error the `addEventListener` here is the modified one attached in `recordGlobalDOMEventListeners`

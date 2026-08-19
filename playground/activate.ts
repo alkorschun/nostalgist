@@ -14,6 +14,79 @@ const coreVersion = useLegacyCore ? 'v1.16.0' : 'v1.22.0'
 const coreDirectory = 'retroarch'
 
 const handlers = {
+  instance: {
+    async saveState() {
+      state = await nostalgist.saveState()
+      console.info(state)
+    },
+
+    async loadState() {
+      await nostalgist.loadState(state.state)
+    },
+
+    async saveSRAM() {
+      sram = await nostalgist.saveSRAM()
+    },
+
+    pause() {
+      nostalgist.pause()
+    },
+
+    resume() {
+      nostalgist.resume()
+    },
+
+    restart() {
+      nostalgist.restart()
+    },
+
+    resize() {
+      nostalgist.resize({ height: 400, width: 400 })
+    },
+
+    async pressA() {
+      await nostalgist.press('a')
+    },
+
+    async pressStart() {
+      await nostalgist.press('start')
+    },
+
+    async screenshot() {
+      const blob = await nostalgist.screenshot()
+      const image = new Image()
+      image.id = 'screenshot'
+      image.src = URL.createObjectURL(blob)
+      image.style.display = 'block'
+      image.style.margin = '1em auto 0 auto'
+      await new Promise((resolve) => {
+        image.addEventListener('load', resolve)
+      })
+      document.body.append(image)
+    },
+
+    async switchDiscToTwo() {
+      await nostalgist.switchDisc(2)
+    },
+
+    async switchDiscToOne() {
+      await nostalgist.switchDisc(1)
+    },
+
+    exit() {
+      nostalgist.exit()
+    },
+
+    exitWithoutRemovingCanvas() {
+      nostalgist.exit({ removeCanvas: false })
+    },
+
+    printStatus() {
+      setTimeout(() => {
+        console.info(nostalgist?.getStatus())
+      }, 100)
+    },
+  },
   static: {
     async nes() {
       nostalgist = await Nostalgist.nes('pong1k.nes')
@@ -146,71 +219,13 @@ const handlers = {
         rom: 'pong1k.nes',
       })
     },
-  },
 
-  instance: {
-    async saveState() {
-      state = await nostalgist.saveState()
-      console.info(state)
-    },
-
-    async loadState() {
-      await nostalgist.loadState(state.state)
-    },
-
-    async saveSRAM() {
-      sram = await nostalgist.saveSRAM()
-    },
-
-    pause() {
-      nostalgist.pause()
-    },
-
-    resume() {
-      nostalgist.resume()
-    },
-
-    restart() {
-      nostalgist.restart()
-    },
-
-    resize() {
-      nostalgist.resize({ height: 400, width: 400 })
-    },
-
-    async pressA() {
-      await nostalgist.press('a')
-    },
-
-    async pressStart() {
-      await nostalgist.press('start')
-    },
-
-    async screenshot() {
-      const blob = await nostalgist.screenshot()
-      const image = new Image()
-      image.id = 'screenshot'
-      image.src = URL.createObjectURL(blob)
-      image.style.display = 'block'
-      image.style.margin = '1em auto 0 auto'
-      await new Promise((resolve) => {
-        image.addEventListener('load', resolve)
+    async launchWithMultiDisc() {
+      nostalgist = await Nostalgist.launch({
+        core: 'pcsx_rearmed',
+        multiDisc: true,
+        rom: ['./disc.m3u', './disc02.chd', './disc01.chd', './disc03.chd', './disc04.chd'],
       })
-      document.body.append(image)
-    },
-
-    exit() {
-      nostalgist.exit()
-    },
-
-    exitWithoutRemovingCanvas() {
-      nostalgist.exit({ removeCanvas: false })
-    },
-
-    printStatus() {
-      setTimeout(() => {
-        console.info(nostalgist?.getStatus())
-      }, 100)
     },
   },
 }

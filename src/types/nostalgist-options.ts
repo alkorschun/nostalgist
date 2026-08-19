@@ -14,6 +14,10 @@ export interface NostalgistCoreDict {
   wasm: ResolvableFileInput
 }
 
+export interface NostalgistMultiDiscOptions {
+  startIndex: number
+}
+
 export type NostalgistResolveFileFunction = (file: string, options: NostalgistOptions) => ResolvableFileInput
 
 export interface NostalgistOptions {
@@ -119,6 +123,11 @@ export interface NostalgistOptions {
    * ```
    */
   rom?: ResolvableFileInput | ResolvableFileInputs
+
+  /**
+   * If the rom is a multi-disc game, this option should be set.
+   */
+  multiDisc?: boolean
 
   /**
    * The name of the shader to be used.

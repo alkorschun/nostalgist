@@ -570,6 +570,11 @@ export class Nostalgist {
     await this.start()
   }
 
+  async switchDisc(index: number) {
+    const emulator = this.getEmulator()
+    return await emulator.switchDisc(index)
+  }
+
   private async setupEmulator() {
     const emulatorOptions = this.getEmulatorOptions()
     this.emulator = new Emulator(emulatorOptions)
