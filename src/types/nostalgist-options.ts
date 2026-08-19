@@ -14,10 +14,6 @@ export interface NostalgistCoreDict {
   wasm: ResolvableFileInput
 }
 
-export interface NostalgistMultiDiscOptions {
-  startIndex: number
-}
-
 export type NostalgistResolveFileFunction = (file: string, options: NostalgistOptions) => ResolvableFileInput
 
 export interface NostalgistOptions {
