@@ -298,7 +298,8 @@ export class Emulator {
 
     const state = new Blob([stateBuffer], { type: 'application/octet-stream' })
     const thumbnail = stateThumbnailBuffer ? new Blob([stateThumbnailBuffer], { type: 'image/png' }) : undefined
-    return { state, thumbnail }
+    const { multiDiscIndex } = this.options
+    return { state, thumbnail, ...(multiDiscIndex !== undefined && { multiDiscIndex }) }
   }
 
   async screenshot() {
@@ -335,25 +336,32 @@ export class Emulator {
   }
 
   async switchDisc(index: number) {
+    const { multiDiscRom } = this.options
+
+    if (!multiDiscRom) {
+      return
+    }
+
     let delta = this.options.multiDiscIndex ? index - this.options.multiDiscIndex : 0
     if (delta === 0) {
       return
     }
 
-    const requestedRom = this.options.multiDiscRom?.[index]
-    if (!requestedRom) {
-      return
-    }
+    const requestedRom = multiDiscRom.get(index)
+    if (requestedRom) {
+      const requestedResolvableFile = await this.options.createResolvableFile(requestedRom)
 
-    const requestedResolvableFile = await this.options.createResolvableFile(requestedRom)
-    if (!requestedResolvableFile) {
-      return
-    }
+      if (!requestedResolvableFile) {
+        return
+      }
 
-    await this.fs.writeFile(
-      path.join(EmulatorFileSystem.contentDirectory, requestedResolvableFile.name),
-      requestedResolvableFile,
-    )
+      await this.fs.writeFile(
+        path.join(EmulatorFileSystem.contentDirectory, requestedResolvableFile.name),
+        requestedResolvableFile,
+      )
+
+      multiDiscRom.delete(index)
+    }
 
     this.sendCommand('DISK_EJECT_TOGGLE')
 
@@ -467,6 +475,8 @@ export class Emulator {
   private keyboardUp(code: string) {
     this.fireKeyboardEvent('keyup', code)
   }
+
+  private loadMultiDiscRom() {}
 
   private postRun() {
     this.resize(this.canvasInitialSize)

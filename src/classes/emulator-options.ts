@@ -74,7 +74,7 @@ export class EmulatorOptions {
 
   multiDisc?: boolean | undefined
 
-  multiDiscRom?: ResolvableFileInput[] | undefined
+  multiDiscRom?: Map<number, ResolvableFileInput> | undefined
 
   multiDiscIndex?: number | undefined
 
@@ -311,7 +311,10 @@ export class EmulatorOptions {
     if (this.multiDisc) {
       this.rom = await Promise.all(romFiles.slice(0, 2).map((file) => this.createResolvableFile(file)))
 
-      this.multiDiscRom = romFiles
+      this.multiDiscRom = new Map()
+      romFiles.slice(2).forEach((file, index) => {
+        this.multiDiscRom?.set(index + 2, file)
+      })
 
       return
     }
