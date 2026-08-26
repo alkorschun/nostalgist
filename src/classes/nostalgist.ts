@@ -551,6 +551,30 @@ export class Nostalgist {
   }
 
   /**
+   *  Switch to a different disc in a multi-disc game. This method will load, if necessary, the needed disc to Emscripten filesystem and then send the needed commands to RetroArch.
+   *  Disc index starts at 1.
+   *  
+   *  @param  index - The index of the disc to switch to. Starts at 1.
+   *  @returns  A Promise that resolves when the disc switch is complete.
+   * 
+   *  @example - switch to disc 2 in a multi-disc game
+   * ```js
+   * nostalgist = await Nostalgist.launch({
+        core: 'pcsx_rearmed',
+        multiDisc: true,
+        rom: ['./disc.m3u', './disc01.chd', './disc02.chd', './disc03.chd', './disc04.chd'],
+      })
+   *     
+   * nostalgist.switchDisc(2)
+   * ```
+  
+   */
+  async switchDisc(index: number) {
+    const emulator = this.getEmulator()
+    return await emulator.switchDisc(index)
+  }
+
+  /**
    * Load options and then launch corresponding emulator if should
    */
   private async load(): Promise<void> {
@@ -568,11 +592,6 @@ export class Nostalgist {
     }
 
     await this.start()
-  }
-
-  async switchDisc(index: number) {
-    const emulator = this.getEmulator()
-    return await emulator.switchDisc(index)
   }
 
   private async setupEmulator() {
