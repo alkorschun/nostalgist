@@ -156,6 +156,15 @@ const nostalgist = await Nostalgist.launch({
 
     In some circumstances, you may want to launch multiple ROMs simultaneously, for example, for some arcade games with a "parent" ROM. Then you can pass an Array of any of the above.
 
+    If you want to take advantage of the multidisc functionality, you must set `multiDisc: true`. It is also important to provide the files in correct order: the `rom` array starts with the playlist file (.m3u), followed by the actual ROM files in their logical disc order:
+
+    ```js
+    const nostalgist = await Nostalgist.launch({
+      multiDisc: true,
+      rom: ['game.m3u', 'game_cd1.chd', 'game_cd2.chd'],
+    })
+    ```
+
   - #### `bios`
 
     **type:**
@@ -477,6 +486,12 @@ const nostalgist = await Nostalgist.launch({
     **since:** `0.9.0`
 
     A custom function after the emulator is launched. The Nostalgist instance will be passed as its first parameter.
+
+  - #### `multiDisc`
+
+    **type** `boolean`
+
+    Activates the multidisc functionality. When enabled, the `rom` array is not resolved eagerly. Instead only the first two elements, the paylist file and the first disc,are loaded at launch.
 
 ## Returns
 
