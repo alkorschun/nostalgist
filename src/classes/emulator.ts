@@ -476,8 +476,6 @@ export class Emulator {
     this.fireKeyboardEvent('keyup', code)
   }
 
-  private loadMultiDiscRom() {}
-
   private postRun() {
     this.resize(this.canvasInitialSize)
 
