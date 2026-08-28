@@ -324,7 +324,7 @@ export class EmulatorOptions {
       return
     }
 
-    this.rom.push(...(await Promise.all(romFiles.map((file) => this.createResolvableFile(file)))))
+    this.rom.push(...(await Promise.all(romFiles.slice(1).map((file) => this.createResolvableFile(file)))))
   }
 
   async createResolvableFile(file: ResolvableFileInput): Promise<ResolvableFile> {
