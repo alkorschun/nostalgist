@@ -146,14 +146,6 @@ const handlers = {
         rom: 'pong1k.nes',
       })
     },
-
-    async launchWithMultiDisc() {
-      nostalgist = await Nostalgist.launch({
-        core: 'pcsx_rearmed',
-        multiDisc: true,
-        rom: ['./disc.m3u', './disc02.chd', './disc01.chd', './disc03.chd', './disc04.chd'],
-      })
-    },
   },
 
   instance: {
@@ -205,14 +197,6 @@ const handlers = {
         image.addEventListener('load', resolve)
       })
       document.body.append(image)
-    },
-
-    async switchDiscToTwo() {
-      await nostalgist.switchDisc(2)
-    },
-
-    async switchDiscToOne() {
-      await nostalgist.switchDisc(1)
     },
 
     exit() {

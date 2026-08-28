@@ -11,7 +11,6 @@ Disc index starts at 1.
 ```js
 nostalgist = await Nostalgist.launch({
   core: 'pcsx_rearmed',
-  multiDisc: true,
   rom: ['./disc.m3u', './disc01.chd', './disc02.chd', './disc03.chd', './disc04.chd'],
 })
 

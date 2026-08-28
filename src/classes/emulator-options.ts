@@ -136,7 +136,7 @@ export class EmulatorOptions {
     this.signal = options.signal
     this.size = options.size ?? 'auto'
     this.sramType = options.sramType ?? 'srm'
-    this.multiDisc = options.multiDisc
+
     // oxlint-disable-next-line typescript/no-deprecated
     this.waitForInteraction = options.waitForInteraction
     this.element = this.getElement()
@@ -308,8 +308,13 @@ export class EmulatorOptions {
 
     const romFiles = Array.isArray(rom) ? rom : [rom]
 
+    const firstFile = await this.createResolvableFile(romFiles[0])
+    this.multiDisc = firstFile.name.endsWith('.m3u')
+
+    this.rom = [firstFile]
+
     if (this.multiDisc) {
-      this.rom = await Promise.all(romFiles.slice(0, 2).map((file) => this.createResolvableFile(file)))
+      this.rom.push(await this.createResolvableFile(romFiles[1]))
 
       this.multiDiscRom = new Map()
       romFiles.slice(2).forEach((file, index) => {
@@ -319,7 +324,7 @@ export class EmulatorOptions {
       return
     }
 
-    this.rom = await Promise.all(romFiles.map((file) => this.createResolvableFile(file)))
+    this.rom.push(...(await Promise.all(romFiles.map((file) => this.createResolvableFile(file)))))
   }
 
   async createResolvableFile(file: ResolvableFileInput): Promise<ResolvableFile> {

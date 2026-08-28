@@ -560,8 +560,7 @@ export class Nostalgist {
    *  @example - switch to disc 2 in a multi-disc game
    * ```js
    * nostalgist = await Nostalgist.launch({
-        core: 'pcsx_rearmed',
-        multiDisc: true,
+        core: 'pcsx_rearmed',      
         rom: ['./disc.m3u', './disc01.chd', './disc02.chd', './disc03.chd', './disc04.chd'],
       })
    *     
